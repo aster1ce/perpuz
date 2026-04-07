@@ -40,13 +40,13 @@
                     <td>
                         <?php
                         if ($r->status == 'menunggu')
-                            echo "MENUNGGU PERSETUJUAN";
+                            echo "Peminjaman Diajukan";
                         elseif ($r->status == 'disetujui')
-                            echo "SEDANG DIPINJAM";
+                            echo "Sedang Dipinjam";
                         elseif ($r->status == 'pending_kembali')
-                            echo "MENUNGGU KONFIRMASI KEMBALI"; // Tambahkan ini
+                            echo "Pengembalian Diajukan"; 
                         elseif ($r->status == 'kembali')
-                            echo "SUDAH DIKEMBALIKAN";
+                            echo "Sudah Dikembalikan";
                         else
                             echo strtoupper($r->status);
                         ?>
