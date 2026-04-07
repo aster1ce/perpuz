@@ -36,7 +36,7 @@
                     <td><?= $no++; ?></td>
                     <td><?= $r->judul; ?></td>
                     <td><?= $r->tanggal_pinjam; ?></td>
-                    <td><?= ($r->tanggal_kembali) ? $r->tanggal_kembali : '-'; ?></td>
+                    <td><?= ($r->tanggal_kembali_real) ? $r->tanggal_kembali_real : '-'; ?></td>
                     <td>
                         <?php
                         if ($r->status == 'menunggu')

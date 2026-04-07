@@ -17,6 +17,14 @@ class M_Buku extends CI_Model
         $this->db->where($where);
         $this->db->delete($table);
     }
+
+    // ini teh buat nambah page (poho)
+    public function get_pagination($limit, $start) {
+        return $this->db->get('buku', $limit, $start)->result();
+    }
+    public function count_all() {
+        return $this->db->get('buku')->num_rows();
+    }
 }
 
 

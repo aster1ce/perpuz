@@ -5,8 +5,8 @@
     <?php if ($this->session->userdata('role') == 'admin'): ?>
         <ul>
             <li><a href="<?= base_url('admin') ?>">Dashboard Admin</a></li>
-            <li><a href="<?= base_url('admin/buku') ?>">Kelola Buku</a></li>
-            <li><a href="<?= base_url('admin/anggota') ?>">Kelola Anggota</a></li>
+            <li><a href="<?= base_url('admin/kelola_buku') ?>">Kelola Buku</a></li>
+            <li><a href="<?= base_url('admin/kelola_user') ?>">Kelola Anggota</a></li>
             <li><a href="<?= base_url('admin/transaksi') ?>">Kelola Transaksi</a></li>
         </ul>
     <?php else: ?>

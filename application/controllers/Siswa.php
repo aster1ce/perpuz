@@ -46,7 +46,7 @@ class Siswa extends CI_Controller
 
     public function riwayat()
     {
-        $id_user = $this->session->userdata('id');
+        $id_user = $this->session->userdata('id_user');
         $filter = $this->input->get('filter');
 
         $this->db->select('peminjaman.*, buku.judul');
@@ -84,5 +84,26 @@ class Siswa extends CI_Controller
         $this->db->update('peminjaman', ['status' => 'pending_kembali']);
         redirect('siswa/riwayat');
     }
+
+    public function proses_pinjam()
+    {
+        $tgl_pinjam = $this->input->post('tanggal_pinjam');
+
+        // Logika MTK: Tambah 3 hari dari tanggal pinjam
+        $tgl_deadline = date('Y-m-d', strtotime($tgl_pinjam . ' +3 days'));
+
+        $data = [
+            'id_user' => $this->session->userdata('id_user'),
+            'id_buku' => $this->input->post('id_buku'),
+            'tanggal_pinjam' => $tgl_pinjam,
+            'tanggal_deadline' => $tgl_deadline,
+            'status' => 'menunggu',
+            'denda' => 0
+        ];
+
+        $this->db->insert('peminjaman', $data);
+        redirect('siswa/riwayat');
+    }
+
 }
 ?>
