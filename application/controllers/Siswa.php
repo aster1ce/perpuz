@@ -66,5 +66,23 @@ class Siswa extends CI_Controller
         $this->load->view('layout/v_sidebar');
         $this->load->view('siswa/v_riwayat', $data);
     }
+
+    public function batal_pinjam($id)
+    {
+        $where = array('id_peminjaman' => $id, 'status' => 'menunggu');
+        $this->db->delete('peminjaman', $where);
+
+        if ($this->db->affected_rows() > 0) {
+            $this->session->set_flashdata('pesan', 'Berhasil dibatalkan');
+        }
+        redirect('siswa/riwayat');
+    }
+
+    public function ajukan_kembali($id)
+    {
+        $this->db->where('id_peminjaman', $id);
+        $this->db->update('peminjaman', ['status' => 'pending_kembali']);
+        redirect('siswa/riwayat');
+    }
 }
 ?>

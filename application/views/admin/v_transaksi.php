@@ -14,11 +14,10 @@
                 <td><strong><?= strtoupper($t->status); ?></strong></td>
                 <td>
                     <?php if ($t->status == 'menunggu'): ?>
-                        <a href="<?= base_url('admin/setuju_pinjam/' . $t->id_peminjaman . '/' . $t->id_buku); ?>"
-                            style="color: green;">Approve</a> |
-                        <a href="<?= base_url('admin/tolak_pinjam/' . $t->id_peminjaman); ?>" style="color: red;">Reject</a>
-                    <?php else: ?>
-                        -
+                        <a href="<?= base_url('admin/setuju_pinjam/' . $t->id_peminjaman . '/' . $t->id_buku); ?>">Setujui Pinjam</a>
+                    <?php elseif ($t->status == 'pending_kembali'): ?>
+                        <a href="<?= base_url('admin/konfirmasi_kembali/' . $t->id_peminjaman . '/' . $t->id_buku); ?>"
+                            style="color: green;">Konfirmasi Kembali</a>
                     <?php endif; ?>
                 </td>
             </tr>

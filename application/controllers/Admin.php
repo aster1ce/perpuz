@@ -67,6 +67,20 @@ class Admin extends CI_Controller
 
         redirect('admin/transaksi');
     }
+
+    public function konfirmasi_kembali($id_peminjaman, $id_buku)
+    {
+        // apdet status
+        $this->db->where('id_peminjaman', $id_peminjaman);
+        $this->db->update('peminjaman', ['status' => 'kembali']);
+
+        // stok balik
+        $this->db->set('stok', 'stok + 1', FALSE);
+        $this->db->where('id_buku', $id_buku);
+        $this->db->update('buku');
+
+        redirect('admin/transaksi');
+    }
 }
 
 

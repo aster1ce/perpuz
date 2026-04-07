@@ -7,9 +7,13 @@
         <select name="filter" onchange="this.form.submit()">
             <option value="">Semua Status</option>
             <option value="menunggu" <?= ($this->input->get('filter') == 'menunggu') ? 'selected' : '' ?>>Menunggu</option>
-            <option value="disetujui" <?= ($this->input->get('filter') == 'disetujui') ? 'selected' : '' ?>>Sedang Dipinjam (Disetujui)</option>
+            <option value="disetujui" <?= ($this->input->get('filter') == 'disetujui') ? 'selected' : '' ?>>Sedang Dipinjam
+                (Disetujui)</option>
+            <option value="pending_kembali" <?= ($this->input->get('filter') == 'pending_kembali') ? 'selected' : '' ?>>
+                Menunggu Approve Kembali</option>
             <option value="ditolak" <?= ($this->input->get('filter') == 'ditolak') ? 'selected' : '' ?>>Ditolak</option>
-            <option value="kembali" <?= ($this->input->get('filter') == 'kembali') ? 'selected' : '' ?>>Sudah Dikembalikan</option>
+            <option value="kembali" <?= ($this->input->get('filter') == 'kembali') ? 'selected' : '' ?>>Sudah Dikembalikan
+            </option>
         </select>
         <a href="<?= base_url('siswa/riwayat') ?>">Reset</a>
     </form>
@@ -22,30 +26,43 @@
                 <th>Tgl Pinjam</th>
                 <th>Tgl Kembali</th>
                 <th>Status</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            <?php if(empty($riwayat)): ?>
-                <tr><td colspan="5" align="center">Belum ada data peminjaman.</td></tr>
-            <?php endif; ?>
-
-            <?php $no=1; foreach($riwayat as $r): ?>
-            <tr>
-                <td><?= $no++; ?></td>
-                <td><?= $r->judul; ?></td>
-                <td><?= $r->tanggal_pinjam; ?></td>
-                <td><?= ($r->tanggal_kembali) ? $r->tanggal_kembali : '-'; ?></td>
-                <td>
-                    <?php 
-                        if($r->status == 'menunggu') echo "<span style='color:orange'>MENUNGGU KONFIRMASI</span>";
-                        elseif($r->status == 'disetujui') echo "<span style='color:blue'>SEDANG DIPINJAM</span>";
-                        elseif($r->status == 'ditolak') echo "<span style='color:red'>PENGAJUAN DITOLAK</span>";
-                        elseif($r->status == 'kembali') echo "<span style='color:green'>SUDAH DIKEMBALIKAN</span>";
-                    ?>
-                </td>
-            </tr>
+            <?php $no = 1;
+            foreach ($riwayat as $r): ?>
+                <tr>
+                    <td><?= $no++; ?></td>
+                    <td><?= $r->judul; ?></td>
+                    <td><?= $r->tanggal_pinjam; ?></td>
+                    <td><?= ($r->tanggal_kembali) ? $r->tanggal_kembali : '-'; ?></td>
+                    <td>
+                        <?php
+                        if ($r->status == 'menunggu')
+                            echo "MENUNGGU PERSETUJUAN";
+                        elseif ($r->status == 'disetujui')
+                            echo "SEDANG DIPINJAM";
+                        elseif ($r->status == 'pending_kembali')
+                            echo "MENUNGGU KONFIRMASI KEMBALI"; // Tambahkan ini
+                        elseif ($r->status == 'kembali')
+                            echo "SUDAH DIKEMBALIKAN";
+                        else
+                            echo strtoupper($r->status);
+                        ?>
+                    </td>
+                    <td>
+                        <?php if ($r->status == 'menunggu'): ?>
+                            <a href="<?= base_url('siswa/batal_pinjam/' . $r->id_peminjaman); ?>" style="color: red;">Batalkan</a>
+                        <?php elseif ($r->status == 'disetujui'): ?>
+                            <a href="<?= base_url('siswa/ajukan_kembali/' . $r->id_peminjaman); ?>"
+                                style="color: blue;">Kembalikan Buku</a>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
+                </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-</div>
 </div>
