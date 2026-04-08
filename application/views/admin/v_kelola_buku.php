@@ -36,7 +36,7 @@
         <form action="<?= base_url('admin/buku_add') ?>" method="post">
             <input type="text" name="judul" placeholder="Judul" required><br><br>
             <input type="text" name="penulis" placeholder="Penulis" required><br><br>
-            <input type="number" name="stok" placeholder="Stok" required><br><br>
+            <input type="number" name="stok" value="0" min="0" required><br><br>
             <button type="submit">Simpan</button>
             <button type="button" onclick="document.getElementById('modalAdd').style.display='none'">Batal</button>
         </form>
@@ -52,7 +52,7 @@
 
             <input type="text" name="judul" id="edit_judul" placeholder="Judul" required><br><br>
             <input type="text" name="penulis" id="edit_penulis" placeholder="Penulis" required><br><br>
-            <input type="number" name="stok" id="edit_stok" placeholder="Stok" required><br><br>
+            <input type="number" name="stok" id="edit_stok" value="0" min="0" required><br><br>
 
             <button type="submit">Update</button>
             <button type="button" onclick="document.getElementById('modalEdit').style.display='none'">Batal</button>

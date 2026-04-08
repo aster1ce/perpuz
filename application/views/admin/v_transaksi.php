@@ -107,7 +107,7 @@
             <input type="hidden" name="id_buku" id="mdl_id_buku">
 
             <label>Jumlah Denda yang Dibayar (Rp):</label>
-            <input type="number" name="denda_dibayar" id="mdl_denda"
+            <input type="number" name="denda_dibayar" id="mdl_denda" min="0"
                 style="width:100%; margin:10px 0; padding:8px; border:1px solid #ccc; border-radius:4px;" required>
 
             <p style="font-size:11px; color:gray; line-height:1.4;">*Admin menginput nominal uang yang diterima dari
