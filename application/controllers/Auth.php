@@ -9,6 +9,11 @@ class Auth extends CI_Controller
         $this->load->view('v_login');
     }
 
+    public function login()
+    {
+        $this->load->view('v_login'); // pastiin nama file view login-nya bener
+    }
+
     public function login_aksi()
     {
         $this->load->model('M_Auth');
@@ -37,6 +42,29 @@ class Auth extends CI_Controller
             // LOGIN GAGAL
             echo "Username atau Password salah!";
         }
+    }
+
+    public function registrasi()
+    {
+        $this->load->view('v_registrasi');
+    }
+
+    public function registrasi_aksi()
+    {
+        $nama = $this->input->post('nama_lengkap');
+        $user = $this->input->post('username');
+        $pass = $this->input->post('password');
+
+        $data = [
+            'nama_lengkap' => $nama,
+            'username' => $user,
+            'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+            'role' => 'siswa'     // Otomatis jadi siswa
+        ];
+
+        $this->db->insert('users', $data);
+        $this->session->set_flashdata('pesan', 'Registrasi Berhasil! Silakan Login.');
+        redirect('auth/login');
     }
     public function logout()
     {
