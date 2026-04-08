@@ -1,7 +1,9 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+#[AllowDynamicProperties]
 class Auth extends CI_Controller
 {
-
     public function index()
     {
         $this->load->view('v_login');
@@ -9,17 +11,17 @@ class Auth extends CI_Controller
 
     public function login_aksi()
     {
-
         $this->load->model('M_Auth');
-        $user = $this->input->post('username');
-        $pass = $this->input->post('password');
+        $user = trim($this->input->post('username'));
+        $pass = trim($this->input->post('password'));
 
-        $where = array('username' => $user, 'password' => $pass); // Nanti bisa pakai password_verify
+        $where = array('username' => $user);
         $cek = $this->M_Auth->cek_login("users", $where)->row_array();
 
-        if ($cek) {
+        if ($cek && password_verify($pass, $cek['password'])) {
+            // LOGIN BERHASIL
             $data_session = array(
-                'id' => $cek['id_user'],
+                'id_user' => $cek['id_user'],
                 'nama' => $cek['nama_lengkap'],
                 'role' => $cek['role'],
                 'status' => "login"
@@ -32,10 +34,10 @@ class Auth extends CI_Controller
                 redirect(base_url("siswa"));
             }
         } else {
-            echo "Username dan password salah!";
+            // LOGIN GAGAL
+            echo "Username atau Password salah!";
         }
     }
-
     public function logout()
     {
         $this->session->sess_destroy();

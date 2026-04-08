@@ -32,7 +32,7 @@ class Siswa extends CI_Controller
             'id_user' => $this->session->userdata('id'),
             'id_buku' => $id_buku,
             'tanggal_pinjam' => date('Y-m-d'),
-            'tanggal_kembali' => date('Y-m-d', strtotime('+7 days')), // Pinjam 7 hari
+            'tanggal_kembali' => date('Y-m-d', strtotime('+3 days')), 
             'status' => 'menunggu'
         );
 
@@ -103,6 +103,9 @@ class Siswa extends CI_Controller
 
         $this->db->insert('peminjaman', $data);
         redirect('siswa/riwayat');
+
+        echo "Isi ID User: " . $this->session->userdata('id_user');
+        die();
     }
 
 }

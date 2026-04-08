@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Admin extends CI_Controller
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -48,13 +49,36 @@ class Admin extends CI_Controller
     {
         $this->db->select('peminjaman.*, users.nama_lengkap, buku.judul');
         $this->db->from('peminjaman');
-        // Tambahin 'left' di parameter kedua join
         $this->db->join('users', 'users.id_user = peminjaman.id_user', 'left');
         $this->db->join('buku', 'buku.id_buku = peminjaman.id_buku', 'left');
-
         $this->db->order_by('id_peminjaman', 'DESC');
-        $data['transaksi'] = $this->db->get()->result();
 
+        $query = $this->db->get()->result();
+
+        foreach ($query as $row) {
+            // 1. Cek dulu, apakah di DB sudah ada denda permanen (hasil input admin)?
+            // Kalau sudah ada (status 'kembali'), kita pakai data dari DB aja.
+            if ($row->status == 'kembali') {
+                // Denda tetap sesuai kolom denda di database
+                continue;
+            }
+
+            // 2. Kalau statusnya masih proses (disetujui atau pending_kembali)
+            // Kita hitung denda berjalannya secara otomatis
+            if ($row->status == "disetujui" || $row->status == "pending_kembali") {
+                $deadline = strtotime($row->tanggal_deadline);
+                $sekarang = strtotime(date('Y-m-d'));
+
+                if ($sekarang > $deadline) {
+                    $selisih_hari = floor(($sekarang - $deadline) / (60 * 60 * 24));
+                    $row->denda = $selisih_hari * 2000;
+                } else {
+                    $row->denda = 0;
+                }
+            }
+        }
+
+        $data['transaksi'] = $query;
         $this->load->view('layout/v_sidebar');
         $this->load->view('admin/v_transaksi', $data);
     }
@@ -75,14 +99,14 @@ class Admin extends CI_Controller
     }
 
     public function tolak_pinjam($id_peminjaman)
-{
-    // Cukup update status jadi ditolak, stok tidak berubah karena belum dikurangi
-    $this->db->where('id_peminjaman', $id_peminjaman);
-    $this->db->update('peminjaman', ['status' => 'ditolak']);
+    {
+        // Cukup update status jadi ditolak, stok tidak berubah karena belum dikurangi
+        $this->db->where('id_peminjaman', $id_peminjaman);
+        $this->db->update('peminjaman', ['status' => 'ditolak']);
 
-    $this->session->set_flashdata('pesan', 'Peminjaman buku telah ditolak.');
-    redirect('admin/transaksi');
-}
+        $this->session->set_flashdata('pesan', 'Peminjaman buku telah ditolak.');
+        redirect('admin/transaksi');
+    }
 
     public function ajukan_kembali($id)
     {
@@ -123,6 +147,28 @@ class Admin extends CI_Controller
         $this->db->update('buku');
 
         $this->session->set_flashdata('pesan', 'Buku berhasil diterima!');
+        redirect('admin/transaksi');
+    }
+
+    public function konfirmasi_kembali_aksi()
+    {
+        $id_peminjaman = $this->input->post('id_peminjaman');
+        $id_buku = $this->input->post('id_buku');
+        $nominal_duit = $this->input->post('denda_dibayar');
+
+        // Simpan ke database: status jadi 'kembali', denda diisi nominal yang dibayar
+        $this->db->update('peminjaman', [
+            'status' => 'kembali',
+            'denda' => $nominal_duit, // Nominal ini masuk ke database secara permanen
+            'tanggal_kembali_real' => date('Y-m-d')
+        ], ['id_peminjaman' => $id_peminjaman]);
+
+        // Update stok buku (+1)
+        $this->db->set('stok', 'stok+1', FALSE);
+        $this->db->where('id_buku', $id_buku);
+        $this->db->update('buku');
+
+        $this->session->set_flashdata('pesan', 'Denda lunas dan buku telah kembali!');
         redirect('admin/transaksi');
     }
 
@@ -194,10 +240,10 @@ class Admin extends CI_Controller
     {
         $data = [
             'username' => $this->input->post('username'),
-            'password' => md5($this->input->post('password')),
+            // GANTI md5 JADI password_hash
+            'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
             'nama_lengkap' => $this->input->post('nama_lengkap'),
             'role' => 'siswa'
-
         ];
         $this->db->insert('users', $data);
         redirect('admin/kelola_user');
@@ -211,9 +257,10 @@ class Admin extends CI_Controller
             'nama_lengkap' => $this->input->post('nama_lengkap')
         ];
 
-        // Update password HANYA jika diisi (biar nggak ganti kalau dikosongkan)
+        // Update password 
         if ($this->input->post('password')) {
-            $data['password'] = md5($this->input->post('password'));
+
+            $data['password'] = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
         }
 
         $this->db->where('id_user', $id);
@@ -233,6 +280,8 @@ class Admin extends CI_Controller
         // 3. Balikin ke halaman daftar user
         redirect('admin/kelola_user');
     }
+
+
 }
 
 

@@ -23,27 +23,31 @@
                     <td><?= $t->judul; ?></td>
                     <td><?= date('d/m/Y', strtotime($t->tanggal_pinjam)); ?></td>
                     <td><?= date('d/m/Y', strtotime($t->tanggal_deadline)); ?></td>
+
                     <td>
-                        <?php if ($t->denda > 0): ?>
-                            <span style="color: red; font-weight: bold;">Rp <?= number_format($t->denda, 0, ',', '.'); ?></span>
+                        <?php if ($t->status == 'kembali'): ?>
+                            <span style="color:green; font-weight:bold;">Rp <?= number_format($t->denda, 0, ',', '.') ?>
+                                (Lunas)</span>
+                        <?php elseif ($t->denda > 0): ?>
+                            <strong style="color:red;">Rp <?= number_format($t->denda, 0, ',', '.') ?></strong>
                         <?php else: ?>
-                            -
+                            <span style="color:gray;">0</span>
                         <?php endif; ?>
                     </td>
+
                     <td>
                         <strong>
                             <?php
-                            if ($t->status == 'menunggu') {
+                            if ($t->status == 'menunggu')
                                 echo "<span style='color: orange;'>Pengajuan Pinjam</span>";
-                            } elseif ($t->status == 'disetujui') {
+                            elseif ($t->status == 'disetujui')
                                 echo "<span style='color: blue;'>Sedang Dipinjam</span>";
-                            } elseif ($t->status == 'pending_kembali') {
+                            elseif ($t->status == 'pending_kembali')
                                 echo "<span style='color: purple;'>Menunggu Konfirmasi Balik</span>";
-                            } elseif ($t->status == 'kembali') {
+                            elseif ($t->status == 'kembali')
                                 echo "<span style='color: green;'>Selesai</span>";
-                            } elseif ($t->status == 'ditolak') {
+                            elseif ($t->status == 'ditolak')
                                 echo "<span style='color: red;'>Ditolak</span>";
-                            }
                             ?>
                         </strong>
                     </td>
@@ -52,13 +56,14 @@
                             <a href="<?= base_url('admin/setuju_pinjam/' . $t->id_peminjaman . '/' . $t->id_buku); ?>"
                                 style="color: blue; font-weight: bold; text-decoration: none;">[Setujui]</a> |
                             <a href="<?= base_url('admin/tolak_pinjam/' . $t->id_peminjaman); ?>"
-                                style="color: red; text-decoration: none;"
-                                onclick="return confirm('Tolak pinjaman ini?')">[Tolak]</a>
+                                style="color: red; text-decoration: none;" onclick="return confirm('Tolak?')">[Tolak]</a>
 
                         <?php elseif ($t->status == 'pending_kembali'): ?>
-                            <a href="<?= base_url('admin/konfirmasi_kembali/' . $t->id_peminjaman . '/' . $t->id_buku); ?>"
-                                style="background: green; color: white; padding: 3px 8px; border-radius: 3px; text-decoration: none;"
-                                onclick="return confirm('Buku sudah diterima & denda sudah dicek?')">Konfirmasi Kembali</a>
+                            <button type="button" class="btn-konfirmasi" data-id="<?= $t->id_peminjaman ?>"
+                                data-buku="<?= $t->id_buku ?>" data-denda="<?= $t->denda ?>"
+                                style="background: green; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">
+                                Konfirmasi Kembali
+                            </button>
 
                         <?php else: ?>
                             <span style="color: #999;">Selesai</span>
@@ -69,3 +74,43 @@
         </tbody>
     </table>
 </div>
+
+<div id="modalDenda"
+    style="display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+    <div style="background:#fff; width:300px; margin:15% auto; padding:20px; border-radius:5px;">
+        <h3 style="margin-top:0;">Terima Pembayaran</h3>
+        <form action="<?= base_url('admin/konfirmasi_kembali_aksi') ?>" method="POST">
+            <input type="hidden" name="id_peminjaman" id="mdl_id_peminjaman">
+            <input type="hidden" name="id_buku" id="mdl_id_buku">
+
+            <label>Jumlah Denda yang Dibayar (Rp):</label>
+            <input type="number" name="denda_dibayar" id="mdl_denda"
+                style="width:100%; margin:10px 0; padding:8px; border:1px solid #ccc; border-radius:4px;" required>
+
+            <p style="font-size:11px; color:gray; line-height:1.4;">*Admin menginput nominal uang yang diterima dari
+                peminjam agar status denda tercatat <b>Lunas</b>.</p>
+
+            <button type="submit"
+                style="background:green; color:white; border:none; padding:10px; width:100%; cursor:pointer; border-radius:4px; font-weight:bold;">Konfirmasi
+                Lunas & Selesai</button>
+            <button type="button" onclick="document.getElementById('modalDenda').style.display='none'"
+                style="margin-top:8px; width:100%; border:none; background:#eee; padding:8px; cursor:pointer; border-radius:4px;">Batal</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.btn-konfirmasi').on('click', function () {
+            const id = $(this).data('id');
+            const buku = $(this).data('buku');
+            const denda = $(this).data('denda');
+
+            $('#mdl_id_peminjaman').val(id);
+            $('#mdl_id_buku').val(buku);
+            $('#mdl_denda').val(denda);
+            $('#modalDenda').show();
+        });
+    });
+</script>
