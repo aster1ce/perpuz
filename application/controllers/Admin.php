@@ -47,24 +47,29 @@ class Admin extends CI_Controller
 
     public function transaksi()
     {
+        // Ambil parameter filter dari URL (misal: ?status=kembali)
+        $status_filter = $this->input->get('status');
+
         $this->db->select('peminjaman.*, users.nama_lengkap, buku.judul');
         $this->db->from('peminjaman');
         $this->db->join('users', 'users.id_user = peminjaman.id_user', 'left');
         $this->db->join('buku', 'buku.id_buku = peminjaman.id_buku', 'left');
-        $this->db->order_by('id_peminjaman', 'DESC');
 
+        // Jika ada filter yang dipilih, tambahkan kondisi WHERE
+        if ($status_filter) {
+            $this->db->where('peminjaman.status', $status_filter);
+        }
+
+        $this->db->order_by('id_peminjaman', 'DESC');
         $query = $this->db->get()->result();
 
         foreach ($query as $row) {
-            // 1. Cek dulu, apakah di DB sudah ada denda permanen (hasil input admin)?
-            // Kalau sudah ada (status 'kembali'), kita pakai data dari DB aja.
+            // 1. Cek dulu, apakah di DB sudah ada denda permanen (status 'kembali')?
             if ($row->status == 'kembali') {
-                // Denda tetap sesuai kolom denda di database
                 continue;
             }
 
-            // 2. Kalau statusnya masih proses (disetujui atau pending_kembali)
-            // Kita hitung denda berjalannya secara otomatis
+            // 2. Hitung denda otomatis untuk status disetujui atau pending_kembali
             if ($row->status == "disetujui" || $row->status == "pending_kembali") {
                 $deadline = strtotime($row->tanggal_deadline);
                 $sekarang = strtotime(date('Y-m-d'));
@@ -79,6 +84,8 @@ class Admin extends CI_Controller
         }
 
         $data['transaksi'] = $query;
+        $data['status_aktif'] = $status_filter; // Buat nandain filter mana yang lagi dipake
+
         $this->load->view('layout/v_sidebar');
         $this->load->view('admin/v_transaksi', $data);
     }
@@ -280,6 +287,36 @@ class Admin extends CI_Controller
         // 3. Balikin ke halaman daftar user
         redirect('admin/kelola_user');
     }
+
+    public function laporan()
+{
+    $tgl_mulai = $this->input->get('tgl_mulai');
+    $tgl_selesai = $this->input->get('tgl_selesai');
+
+    if ($tgl_mulai && $tgl_selesai) {
+        $this->db->where('tanggal_pinjam >=', $tgl_mulai);
+        $this->db->where('tanggal_pinjam <=', $tgl_selesai);
+    }
+
+    $this->db->select('peminjaman.*, users.nama_lengkap, buku.judul');
+    $this->db->from('peminjaman');
+    $this->db->join('users', 'users.id_user = peminjaman.id_user', 'left');
+    $this->db->join('buku', 'buku.id_buku = peminjaman.id_buku', 'left');
+    $data['laporan'] = $this->db->get()->result();
+    
+    // (Summary)
+    $data['total_pinjam'] = count($data['laporan']);
+    $data['total_denda'] = 0;
+    foreach($data['laporan'] as $l) {
+        $data['total_denda'] += $l->denda;
+    }
+
+    $data['tgl_mulai'] = $tgl_mulai;
+    $data['tgl_selesai'] = $tgl_selesai;
+
+    $this->load->view('layout/v_sidebar');
+    $this->load->view('admin/v_laporan', $data);
+}
 
 
 }

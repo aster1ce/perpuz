@@ -8,6 +8,7 @@
             <li><a href="<?= base_url('admin/kelola_buku') ?>">Kelola Buku</a></li>
             <li><a href="<?= base_url('admin/kelola_user') ?>">Kelola Anggota</a></li>
             <li><a href="<?= base_url('admin/transaksi') ?>">Kelola Transaksi</a></li>
+            <li><a href="<?= base_url('admin/laporan') ?>">Laporan</a></li>
         </ul>
     <?php else: ?>
         <ul>
