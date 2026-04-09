@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2026 at 09:45 AM
+-- Generation Time: Apr 09, 2026 at 10:53 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,9 +42,12 @@ CREATE TABLE `buku` (
 --
 
 INSERT INTO `buku` (`id_buku`, `id_kategori`, `judul`, `penulis`, `penerbit`, `tahun_terbit`, `stok`) VALUES
-(1, 3, 'Belajar CI3 untuk Pemula', 'Andi', 'Informatika', 2023, 10),
+(1, 3, 'Belajar CI3 untuk Pemula', 'Andi', 'Informatika', 2023, 12),
 (2, 1, 'Laskar Pelangi', 'Andrea Hirata', 'Bentang Pustaka', 2005, 10),
-(5, NULL, 'sangkuriangss', 'penulisnya guwesafas', NULL, NULL, 1);
+(5, NULL, 'sangkuriangss', 'penulisnya guwe', NULL, NULL, 1),
+(7, NULL, 'Jangan Sering Ngoding', 'Odading', NULL, NULL, 10),
+(8, NULL, 'Ngoding Membunuhmu', 'Odading', NULL, NULL, 10),
+(9, NULL, 'Cara Menjadi Miliarder Dengan PHP', 'Aram', NULL, NULL, 10);
 
 -- --------------------------------------------------------
 
@@ -80,20 +83,28 @@ CREATE TABLE `peminjaman` (
   `tanggal_kembali_real` date DEFAULT NULL,
   `tanggal_deadline` date DEFAULT NULL,
   `status` enum('menunggu','disetujui','ditolak','kembali','pending_kembali') DEFAULT 'menunggu',
-  `denda` int(11) DEFAULT 0
+  `denda` int(11) DEFAULT 0,
+  `status_bayar` enum('belum','lunas') NOT NULL DEFAULT 'belum'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `peminjaman`
 --
 
-INSERT INTO `peminjaman` (`id_peminjaman`, `id_user`, `id_buku`, `tanggal_pinjam`, `tanggal_kembali_real`, `tanggal_deadline`, `status`, `denda`) VALUES
-(6, 2, 1, '2026-04-08', NULL, '2026-04-11', 'disetujui', 0),
-(13, 2719, 1, '2026-04-01', NULL, '2026-04-05', 'pending_kembali', 0),
-(14, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000),
-(15, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000),
-(16, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000),
-(17, 2719, 1, '2026-04-01', NULL, '2026-04-05', 'pending_kembali', 0);
+INSERT INTO `peminjaman` (`id_peminjaman`, `id_user`, `id_buku`, `tanggal_pinjam`, `tanggal_kembali_real`, `tanggal_deadline`, `status`, `denda`, `status_bayar`) VALUES
+(6, 2, 1, '2026-04-08', NULL, '2026-04-11', 'disetujui', 0, 'belum'),
+(13, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000, 'lunas'),
+(14, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000, 'lunas'),
+(15, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000, 'lunas'),
+(16, 2719, 1, '2026-04-01', '2026-04-08', '2026-04-05', 'kembali', 6000, 'lunas'),
+(17, 2719, 1, '2026-03-30', '2026-04-09', '2026-04-02', 'kembali', 14000, 'lunas'),
+(19, 2719, 1, '2026-04-08', '2026-04-09', '2026-04-11', 'kembali', 0, 'lunas'),
+(20, 2719, 5, '2026-04-09', '2026-04-09', '2026-04-12', 'kembali', 0, 'lunas'),
+(21, 2719, 1, '2026-03-30', '2026-04-09', '2026-04-02', 'kembali', 14000, 'lunas'),
+(22, 2719, 1, '2026-04-09', NULL, '2026-04-12', 'disetujui', 0, 'belum'),
+(23, 2719, 1, '2026-04-09', NULL, '2026-04-12', 'ditolak', 0, 'belum'),
+(24, 2719, 1, '2026-03-30', NULL, '2026-04-02', 'pending_kembali', 0, 'belum'),
+(25, 2719, 5, '2026-04-09', NULL, '2026-04-12', 'menunggu', 0, 'belum');
 
 -- --------------------------------------------------------
 
@@ -119,12 +130,9 @@ INSERT INTO `users` (`id_user`, `username`, `password`, `nama_lengkap`, `alamat`
 (1, 'admin1', '$2y$10$8Q6/D1O1yG.J.Y.S', 'Admin Perpustakaan', NULL, 'admin', '2026-04-06 06:42:51'),
 (2, 'siswa1', '$2y$10$8Q6/D1O1yG.J.Y.S', 'Ridwan Januar', NULL, 'siswa', '2026-04-06 06:42:51'),
 (2717, 'admin_baru', '$2y$10$jQORM7yxUQaJU8jJeN6L6u9Pe9Qtmx57Fu5mIGFWvdbgqudNwsV/6', 'Administrator Utama', NULL, 'admin', '2026-04-08 02:43:23'),
-(2718, 'siswa_baru', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Siswa Percobaan', NULL, 'siswa', '2026-04-08 02:43:23'),
 (2719, 'ridwan', '$2y$10$bMxLZsWubZIYMUUm61DAP.ccEhkZ4MYdfcXurQzDzaxBwvXlDIsPO', 'erjeka cakef', NULL, 'siswa', '2026-04-08 02:58:04'),
-(2720, 'siomay', '53c00b8212b0158b154b4ad5c7458119', 'siomay', NULL, 'siswa', '2026-04-08 06:15:12'),
-(2722, 'kokoro', '$2y$10$/5/FmnLTDk6SU./sq46sb.hkcxdTgGYpEs1bpv0e9fqvERj07.JBm', 'kokoro', NULL, 'siswa', '2026-04-08 06:21:21'),
-(2723, 'aduhay', '$2y$10$cBcd5g.xr3T7firgdgZAjukAC3O6cym11x/ZovxCq3kkWp34oHqvG', 'anak sukses', NULL, 'siswa', '2026-04-08 06:29:01'),
-(2725, 'mada', '$2y$10$Y1hEjEjSvgkt7jIa7cJ5meD7OozPI6rNP0DUhSL5MY2Pk919aPYO.', 'mada', NULL, 'siswa', '2026-04-08 06:54:02');
+(2726, 'yajuj', '$2y$10$Ibq5j6CFyZ8BIE0UUGuRvelYz7gkWkQsnlNkToZ2odUK6qZhzsHMu', 'yajujmajuj', NULL, 'siswa', '2026-04-09 03:47:01'),
+(2727, 'gugu', '$2y$10$LQwiqmZhLvNffLU5yugwdu8GM.cdBTfi7.Cp7etw4hiiWsrYi/KCm', 'kudajemping', NULL, 'siswa', '2026-04-09 06:39:31');
 
 --
 -- Indexes for dumped tables
@@ -166,7 +174,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `buku`
 --
 ALTER TABLE `buku`
-  MODIFY `id_buku` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_buku` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `kategori`
@@ -178,13 +186,13 @@ ALTER TABLE `kategori`
 -- AUTO_INCREMENT for table `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2726;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2728;
 
 --
 -- Constraints for dumped tables
