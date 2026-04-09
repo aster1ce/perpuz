@@ -1,128 +1,171 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
+<!DOCTYPE html>
+<html lang="id">
 
-<style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
-        /* Soft white/grey background */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-    }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Booksy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-    .login-container {
-        width: 100%;
-        max-width: 400px;
-        padding: 2.5rem;
-        background: #ffffff;
-        border-radius: 24px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(226, 232, 240, 0.8);
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #0f0f0f;
+            /* Dark background */
+            background-image:
+                radial-gradient(circle at 20% 30%, #1a1a1a 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, #222 0%, transparent 50%);
+        }
 
-    .login-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
 
-    .login-header h2 {
-        font-weight: 600;
-        color: #1e293b;
-        letter-spacing: -0.5px;
-    }
+        .login-box {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
 
-    .input-group-text {
-        background-color: transparent;
-        border-right: none;
-        color: #94a3b8;
-        padding-left: 1.25rem;
-    }
+        .brand-logo {
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
 
-    .form-control {
-        border-left: none;
-        padding: 0.75rem 1.25rem 0.75rem 0;
-        font-size: 0.95rem;
-        color: #1e293b;
-        border-color: #dee2e6;
-    }
+        .brand-logo h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -1px;
+        }
 
-    .form-control:focus {
-        box-shadow: none;
-        border-color: #dee2e6;
-    }
+        .login-box h2 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
 
-    .input-group:focus-within .input-group-text,
-    .input-group:focus-within .form-control {
-        border-color: #3b82f6;
-        /* Blue accent */
-        color: #3b82f6;
-    }
+        .login-box p {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
 
-    .btn-login {
-        background-color: #3b82f6;
-        border: none;
-        padding: 0.8rem;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
-    }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
 
-    .btn-login:hover {
-        background-color: #2563eb;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
+        .input-group span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            font-size: 20px;
+        }
 
-    .footer-text {
-        color: #64748b;
-        font-size: 0.875rem;
-    }
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            font-size: 15px;
+        }
 
-    .footer-text a {
-        color: #3b82f6;
-        text-decoration: none;
-        font-weight: 600;
-    }
-</style>
+        input:focus {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
 
-<div class="login-container">
-    <div class="login-header">
-        <h2>Welcome Back</h2>
-        <p class="text-muted small">Please enter your details</p>
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .footer-text a {
+            color: #888;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <div class="login-box">
+            <div class="brand-logo">
+                <span class="material-icons" style="font-size: 32px;">auto_stories</span>
+                <h1>Booksy</h1>
+            </div>
+
+            <h2>Welcome Back!</h2>
+            <p>Silahkan masuk ke akunmu.</p>
+
+            <form action="<?= base_url('auth/login_aksi'); ?>" method="post">
+                <div class="input-group">
+                    <span class="material-icons">person</span>
+                    <input type="text" name="username" placeholder="Username" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons">lock</span>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+
+                <button type="submit">Login</button>
+            </form>
+
+            <div class="footer-text">
+                Belum punya akun? <a href="#">Hubungi Admin</a>
+            </div>
+        </div>
     </div>
 
-    <form action="<?= base_url('auth/login_aksi'); ?>" method="post">
-        <div class="mb-3">
-            <div class="input-group">
-                <span class="input-group-text">
-                    <i data-lucide="user" style="width: 18px; height: 18px;"></i>
-                </span>
-                <input type="text" name="username" class="form-control" placeholder="Username" required>
-            </div>
-        </div>
+</body>
 
-        <div class="mb-4">
-            <div class="input-group">
-                <span class="input-group-text">
-                    <i data-lucide="lock" style="width: 18px; height: 18px;"></i>
-                </span>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100 btn-login">Login</button>
-    </form>
-
-    <p class="footer-text text-center mt-4">
-        Belum punya akun? <a href="<?= base_url('auth/registrasi') ?>">Daftar di sini</a>
-    </p>
-</div>
-
-<script>
-    lucide.createIcons();
-</script>
+</html>
