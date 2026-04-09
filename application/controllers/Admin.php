@@ -20,11 +20,58 @@ class Admin extends CI_Controller
 
     public function index()
     {
+        // 1. Load Model
+        $this->load->model('M_Admin');
+
+        // 2. Ambil data statistik umum
+        $stats = $this->M_Admin->get_stats() ?? [];
+
+        // 3. Olah data Chart Status (Donut)
+        $status_data = [0, 0, 0];
+        if (isset($stats['status_counts']) && is_array($stats['status_counts'])) {
+            foreach ($stats['status_counts'] as $sc) {
+                $status_cek = strtolower($sc['status']);
+                if ($status_cek == 'menunggu') {
+                    $status_data[0] = (int) $sc['jumlah'];
+                } elseif ($status_cek == 'disetujui' || $status_cek == 'pinjam') {
+                    $status_data[1] = (int) $sc['jumlah'];
+                } elseif ($status_cek == 'kembali') {
+                    $status_data[2] = (int) $sc['jumlah'];
+                }
+            }
+        }
+
+        // 4. Olah data Traffic Mingguan (Line Chart)
+        $mingguan = $this->M_Admin->get_peminjaman_mingguan() ?? [];
+        $hari = [];
+        $jumlah = [];
+
+        if (!empty($mingguan)) {
+            foreach ($mingguan as $m) {
+                $hari[] = $m['hari'];
+                $jumlah[] = (int) $m['jumlah'];
+            }
+        } else {
+            // Fallback kalau data kosong biar chart gak ilang
+            $hari = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+            $jumlah = [0, 0, 0, 0, 0, 0, 0];
+        }
+
+        // 5. Gabungkan semua ke array $data
+        $data = [
+            'total_user' => $stats['total_user'] ?? 0,
+            'total_buku' => $stats['total_buku'] ?? 0,
+            'kategori_fav' => $stats['kategori_fav'] ?? [],
+            'logs' => $stats['log_aktivitas'] ?? [],
+            'chart_status' => json_encode($status_data),
+            'chart_hari' => json_encode($hari),
+            'chart_jumlah' => json_encode($jumlah)
+        ];
+
+        // 6. Load View
         $this->load->view('layout/v_sidebar');
-        $data['buku'] = $this->M_Buku->tampil_data()->result();
         $this->load->view('admin/v_index', $data);
     }
-
     //Buat tambah buku bisi poho 
     public function tambah_aksi()
     {
@@ -47,29 +94,59 @@ class Admin extends CI_Controller
 
     public function transaksi()
     {
-        // Ambil parameter filter dari URL (misal: ?status=kembali)
+        // 1. Ambil filter & offset
         $status_filter = $this->input->get('status');
+        $start = $this->uri->segment(3) ? $this->uri->segment(3) : 0;
 
+        $this->load->library('pagination');
+
+        // 2. Config Pagination (Base URL & Suffix buat filter)
+        $config['base_url'] = base_url('admin/transaksi');
+        if ($status_filter) {
+            $config['suffix'] = '?' . http_build_query($_GET, '', "&");
+            $config['first_url'] = $config['base_url'] . '?' . http_build_query($_GET, '', "&");
+        }
+
+        // 3. Hitung Total Rows (Sesuaikan dengan filter)
+        if ($status_filter) {
+            $this->db->where('status', $status_filter);
+        }
+        $config['total_rows'] = $this->db->count_all_results('peminjaman');
+        $config['per_page'] = 5; // Mau tampil berapa per halaman? misal 10
+        $config['uri_segment'] = 3;
+
+        // 4. Styling Pagination (Biar sinkron sama desain modern tadi)
+        $config['full_tag_open'] = '';
+        $config['full_tag_close'] = '';
+        $config['cur_tag_open'] = '<strong>';
+        $config['cur_tag_close'] = '</strong>';
+        $config['num_tag_open'] = '';
+        $config['num_tag_close'] = '';
+        $config['next_link'] = '<span class="material-icons" style="font-size:18px">chevron_right</span>';
+        $config['prev_link'] = '<span class="material-icons" style="font-size:18px">chevron_left</span>';
+
+        $this->pagination->initialize($config);
+
+        // 5. Query Data (Sesuai limit & offset pagination)
         $this->db->select('peminjaman.*, users.nama_lengkap, buku.judul');
         $this->db->from('peminjaman');
         $this->db->join('users', 'users.id_user = peminjaman.id_user', 'left');
         $this->db->join('buku', 'buku.id_buku = peminjaman.id_buku', 'left');
 
-        // Jika ada filter yang dipilih, tambahkan kondisi WHERE
         if ($status_filter) {
             $this->db->where('peminjaman.status', $status_filter);
         }
 
         $this->db->order_by('id_peminjaman', 'DESC');
+        $this->db->limit($config['per_page'], $start);
         $query = $this->db->get()->result();
 
+        // 6. Logic Hitung Denda Otomatis (Tetap jalan di sini)
         foreach ($query as $row) {
-            // 1. Cek dulu, apakah di DB sudah ada denda permanen (status 'kembali')?
             if ($row->status == 'kembali') {
                 continue;
             }
 
-            // 2. Hitung denda otomatis untuk status disetujui atau pending_kembali
             if ($row->status == "disetujui" || $row->status == "pending_kembali") {
                 $deadline = strtotime($row->tanggal_deadline);
                 $sekarang = strtotime(date('Y-m-d'));
@@ -83,8 +160,10 @@ class Admin extends CI_Controller
             }
         }
 
+        // 7. Lempar ke View
         $data['transaksi'] = $query;
-        $data['status_aktif'] = $status_filter; // Buat nandain filter mana yang lagi dipake
+        $data['pagination'] = $this->pagination->create_links();
+        $data['status_aktif'] = $status_filter;
 
         $this->load->view('layout/v_sidebar');
         $this->load->view('admin/v_transaksi', $data);
@@ -115,14 +194,6 @@ class Admin extends CI_Controller
         redirect('admin/transaksi');
     }
 
-    public function ajukan_kembali($id)
-    {
-        $this->db->where('id_peminjaman', $id);
-        $this->db->update('peminjaman', ['status' => 'pending_kembali']);
-
-        $this->session->set_flashdata('pesan', 'Pengajuan pengembalian dikirim. Serahkan buku ke pustakawan.');
-        redirect('siswa/riwayat');
-    }
 
     public function konfirmasi_kembali($id_peminjaman, $id_buku)
     {
@@ -162,11 +233,15 @@ class Admin extends CI_Controller
         $id_peminjaman = $this->input->post('id_peminjaman');
         $id_buku = $this->input->post('id_buku');
         $nominal_duit = $this->input->post('denda_dibayar');
+        $total_tagihan = $this->input->post('total_tagihan');
 
-        // Simpan ke database: status jadi 'kembali', denda diisi nominal yang dibayar
+
+        $status_bayar = ($nominal_duit >= $total_tagihan) ? 'lunas' : 'belum';
+
         $this->db->update('peminjaman', [
             'status' => 'kembali',
-            'denda' => $nominal_duit, // Nominal ini masuk ke database secara permanen
+            'denda' => $total_tagihan, // Tetap simpan nominal denda aslinya
+            'status_bayar' => $status_bayar,  // KOLOM BARU: lunas/belum
             'tanggal_kembali_real' => date('Y-m-d')
         ], ['id_peminjaman' => $id_peminjaman]);
 
@@ -175,7 +250,7 @@ class Admin extends CI_Controller
         $this->db->where('id_buku', $id_buku);
         $this->db->update('buku');
 
-        $this->session->set_flashdata('pesan', 'Denda lunas dan buku telah kembali!');
+        $this->session->set_flashdata('pesan', 'Transaksi berhasil diproses!');
         redirect('admin/transaksi');
     }
 
@@ -289,37 +364,47 @@ class Admin extends CI_Controller
     }
 
     public function laporan()
-{
-    $tgl_mulai = $this->input->get('tgl_mulai');
-    $tgl_selesai = $this->input->get('tgl_selesai');
+    {
+        $tgl_mulai = $this->input->get('tgl_mulai');
+        $tgl_selesai = $this->input->get('tgl_selesai');
+        $filter = $this->input->get('filter');
 
-    if ($tgl_mulai && $tgl_selesai) {
-        $this->db->where('tanggal_pinjam >=', $tgl_mulai);
-        $this->db->where('tanggal_pinjam <=', $tgl_selesai);
+        $data['detail_transaksi'] = [];
+        $data['total_pinjam'] = 0;
+        $data['total_denda'] = 0;
+
+        if ($tgl_mulai && $tgl_selesai) {
+            $this->db->select('peminjaman.*, users.nama_lengkap, buku.judul');
+            $this->db->from('peminjaman');
+            $this->db->join('users', 'users.id_user = peminjaman.id_user', 'left');
+            $this->db->join('buku', 'buku.id_buku = peminjaman.id_buku', 'left');
+
+            $this->db->where('tanggal_pinjam >=', $tgl_mulai);
+            $this->db->where('tanggal_pinjam <=', $tgl_selesai);
+
+            // Filter Status Sesuai Database
+            if ($filter && $filter !== 'Semua') {
+                $this->db->where('peminjaman.status', $filter);
+            }
+
+            $this->db->order_by('tanggal_pinjam', 'DESC');
+            $query = $this->db->get()->result();
+
+            $data['detail_transaksi'] = $query;
+            $data['total_pinjam'] = count($query);
+
+            foreach ($query as $l) {
+                $data['total_denda'] += $l->denda;
+            }
+        }
+
+        $data['tgl_mulai'] = $tgl_mulai;
+        $data['tgl_selesai'] = $tgl_selesai;
+        $data['filter'] = $filter;
+
+        $this->load->view('layout/v_sidebar');
+        $this->load->view('admin/v_laporan', $data);
     }
 
-    $this->db->select('peminjaman.*, users.nama_lengkap, buku.judul');
-    $this->db->from('peminjaman');
-    $this->db->join('users', 'users.id_user = peminjaman.id_user', 'left');
-    $this->db->join('buku', 'buku.id_buku = peminjaman.id_buku', 'left');
-    $data['laporan'] = $this->db->get()->result();
-    
-    // (Summary)
-    $data['total_pinjam'] = count($data['laporan']);
-    $data['total_denda'] = 0;
-    foreach($data['laporan'] as $l) {
-        $data['total_denda'] += $l->denda;
-    }
-
-    $data['tgl_mulai'] = $tgl_mulai;
-    $data['tgl_selesai'] = $tgl_selesai;
-
-    $this->load->view('layout/v_sidebar');
-    $this->load->view('admin/v_laporan', $data);
-}
-
 
 }
-
-
-?>

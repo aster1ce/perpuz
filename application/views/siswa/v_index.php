@@ -3,7 +3,7 @@
         <div class="div9 bento-item profile-card">
             <div class="bento-content">
                 <span class="material-icons icon-main">account_circle</span>
-                <h2>Halo, <br><?= $this->session->userdata('nama_lengkap') ?>!</h2>
+                <h2>Halo, <br><?= $this->session->userdata('role') ?>!</h2>
                 <p>Siap buat nambah ilmu hari ini? Cek koleksi buku terbaru kita ya.</p>
                 <a href="<?= base_url('siswa/katalog') ?>" class="btn-explore">Cari Buku <span
                         class="material-icons">arrow_forward</span></a>
@@ -13,17 +13,17 @@
         <div class="div10 bento-item stats-card">
             <div class="bento-content">
                 <div class="stats-info">
-                    <span class="material-icons">menu_book</span>
+                    <span class="material-icons" style="color: #1a1a1a;">menu_book</span>
                     <div>
                         <h3>Buku Dipinjam</h3>
-                        <h1><?= $total_pinjam ?> <small>Buku</small></h1>
+                        <h1><?= number_format($total_pinjam) ?> <small>Buku</small></h1>
                     </div>
                 </div>
                 <div class="stats-info">
                     <span class="material-icons" style="color: #4caf50;">check_circle</span>
                     <div>
                         <h3>Selesai</h3>
-                        <h1><?= $total_selesai ?></h1>
+                        <h1><?= number_format($total_selesai) ?></h1>
                     </div>
                 </div>
             </div>
@@ -33,12 +33,22 @@
             <div class="bento-content">
                 <div class="denda-header">
                     <span class="material-icons">payments</span>
-                    <h3>Tagihan Denda</h3>
+                    <h3>Total Denda Terbayar</h3>
                 </div>
-                <h2 class="price">Rp <?= number_format($total_denda, 0, ',', '.') ?></h2>
+                <h2 class="price">Rp <?= number_format($total_denda_lunas, 0, ',', '.') ?></h2>
                 <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 15px 0;">
-                <p class="tips"><span class="material-icons">info</span> <b>Tips:</b> Balikin buku sebelum deadline biar
-                    denda nggak makin numpuk, Bestie!</p>
+
+                <?php if ($total_denda_lunas > 0): ?>
+                    <p class="tips" style="color: #4b5563;">
+                        <span class="material-icons" style="color: #f59e0b;">info</span>
+                        <b>Catatan:</b> Kedepannya jangan telat balikin buku lagi ya, biar rekormu makin mantap!
+                    </p>
+                <?php else: ?>
+                    <p class="tips" style="color: #2e7d32;">
+                        <span class="material-icons">verified</span>
+                        <b>Disiplin Banget:</b> Akunmu bersih dari riwayat denda. Keren, pertahankan terus!
+                    </p>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -46,20 +56,37 @@
             <div class="bento-content">
                 <h3>Aktivitas Terakhir</h3>
                 <ul class="quick-list">
-                    <li>
-                        <span class="dot"></span>
-                        <div>
-                            <p class="book-title">Pemrograman PHP</p>
-                            <small>Sedang Dipinjam</small>
+                    <?php if (!empty($riwayat_terakhir)): ?>
+                        <?php foreach ($riwayat_terakhir as $r): ?>
+                            <li>
+                                <?php
+                                // Logika warna dot berdasarkan status
+                                $dot_class = '';
+                                $status_text = '';
+                                if ($r->status == 'disetujui') {
+                                    $dot_class = '';
+                                    $status_text = 'Sedang Dipinjam';
+                                } elseif ($r->status == 'kembali') {
+                                    $dot_class = 'done';
+                                    $status_text = 'Sudah Kembali';
+                                } elseif ($r->status == 'menunggu') {
+                                    $dot_class = 'pending';
+                                    $status_text = 'Menunggu Persetujuan';
+                                }
+                                ?>
+                                <span class="dot <?= $dot_class ?>"></span>
+                                <div>
+                                    <p class="book-title"><?= $r->judul ?></p>
+                                    <small><?= $status_text ?> • <?= date('d M', strtotime($r->tanggal_pinjam)) ?></small>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div style="text-align: center; color: #ccc; margin-top: 20px;">
+                            <span class="material-icons" style="font-size: 48px;">history_toggle_off</span>
+                            <p style="font-size: 13px;">Belum ada aktivitas</p>
                         </div>
-                    </li>
-                    <li>
-                        <span class="dot done"></span>
-                        <div>
-                            <p class="book-title">Basis Data XII</p>
-                            <small>Sudah Kembali</small>
-                        </div>
-                    </li>
+                    <?php endif; ?>
                 </ul>
                 <a href="<?= base_url('siswa/riwayat') ?>" class="link-more">Lihat Semua Riwayat</a>
             </div>
@@ -68,6 +95,20 @@
 </div>
 
 <style>
+    .dot.pending {
+        background: #ff9800;
+    }
+
+    /* Orange untuk menunggu */
+    .dot {
+        background: #2196f3;
+    }
+
+    /* Biru untuk dipinjam */
+    .dot.done {
+        background: #4caf50;
+    }
+
     /* GRID SYSTEM BENTO */
     .parent-bento {
         display: grid;

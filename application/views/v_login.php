@@ -161,7 +161,8 @@
             </form>
 
             <div class="footer-text">
-                Belum punya akun? <a href="#">Hubungi Admin</a>
+                Belum punya akun? <a href="<?= base_url('auth/registrasi') ?>"
+                    style="color: #2563eb; font-weight: 700; text-decoration: none;">Daftar Sekarang</a>
             </div>
         </div>
     </div>

@@ -165,7 +165,7 @@
 
 .modal-footer { padding: 0 25px 25px; }
 .btn-submit { background: #1a1a1a; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; margin-bottom: 10px; }
-.btn-submit.update { background: #1976d2; }
+.btn-submit.update { background: #1a1a1a; }
 .btn-cancel { width: 100%; background: none; border: none; color: #888; font-weight: 600; cursor: pointer; }
 
 /* PAGINATION OVERRIDE */

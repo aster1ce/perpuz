@@ -4,100 +4,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi Siswa - Booksy</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Registrasi | Booksy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-
+    
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            /* Soft white/grey background */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
+            background: #0f0f0f; /* Konsisten dengan Login */
+            background-image: 
+                radial-gradient(circle at 20% 30%, #1a1a1a 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, #222 0%, transparent 50%);
         }
 
         .reg-container {
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem;
-            background: #ffffff;
+            padding: 20px;
+        }
+
+        .reg-box {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
             border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-
-        .reg-header {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             text-align: center;
-            margin-bottom: 2rem;
         }
 
-        .reg-header h2 {
-            font-weight: 600;
-            color: #1e293b;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
+        .brand-logo {
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
-        /* Styling Input Group agar terlihat Seamless */
-        .input-group-text {
-            background-color: transparent;
-            border-right: none;
-            color: #94a3b8;
-            padding-left: 1.25rem;
-            border-color: #dee2e6;
+        .brand-logo h1 {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: -1px;
+            font-weight: 800;
         }
 
-        .form-control {
-            border-left: none;
-            padding: 0.75rem 1.25rem 0.75rem 0;
-            font-size: 0.95rem;
-            color: #1e293b;
-            border-color: #dee2e6;
+        .reg-box h2 {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 20px;
+            font-weight: 700;
         }
 
-        .form-control:focus {
-            box-shadow: none;
-            border-color: #dee2e6;
+        .reg-box p {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
 
-        /* Warna Aksen Blue saat Input Aktif */
-        .input-group:focus-within .input-group-text,
-        .input-group:focus-within .form-control {
-            border-color: #3b82f6;
-            color: #3b82f6;
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+            position: relative;
         }
 
-        .btn-register {
-            background-color: #3b82f6;
-            border: none;
-            padding: 0.8rem;
+        /* Icon styling inside input */
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            font-size: 15px;
         }
 
-        .btn-register:hover {
-            background-color: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        input:focus {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
         }
 
         .footer-text {
-            color: #64748b;
-            font-size: 0.875rem;
+            margin-top: 25px;
+            color: #555;
+            font-size: 13px;
         }
 
         .footer-text a {
-            color: #3b82f6;
+            color: #fff; /* White link for dark theme */
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -105,51 +146,50 @@
 <body>
 
     <div class="reg-container">
-        <div class="reg-header">
+        <div class="reg-box">
+            <div class="brand-logo">
+                <i data-lucide="book-open" style="width: 28px; height: 28px;"></i>
+                <h1>Booksy</h1>
+            </div>
+
             <h2>Daftar Akun</h2>
-            <p class="text-muted small">Bergabunglah dengan komunitas Booksy</p>
-        </div>
+            <p>Ayo gabung jadi anggota perpustakaan!</p>
 
-        <form action="<?= base_url('auth/registrasi_aksi') ?>" method="POST">
-            <div class="mb-3">
+            <form action="<?= base_url('auth/registrasi_aksi') ?>" method="POST">
                 <div class="input-group">
-                    <span class="input-group-text">
-                        <i data-lucide="user-plus" style="width: 18px; height: 18px;"></i>
-                    </span>
-                    <input type="text" name="nama_lengkap" class="form-control" placeholder="Nama Lengkap" required>
+                    <div class="input-icon">
+                        <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <input type="text" name="nama_lengkap" placeholder="Nama Lengkap" required autocomplete="off">
                 </div>
-            </div>
 
-            <div class="mb-3">
                 <div class="input-group">
-                    <span class="input-group-text">
+                    <div class="input-icon">
                         <i data-lucide="at-sign" style="width: 18px; height: 18px;"></i>
-                    </span>
-                    <input type="text" name="username" class="form-control" placeholder="Username Baru" required>
+                    </div>
+                    <input type="text" name="username" placeholder="Username Baru" required autocomplete="off">
                 </div>
-            </div>
 
-            <div class="mb-4">
                 <div class="input-group">
-                    <span class="input-group-text">
+                    <div class="input-icon">
                         <i data-lucide="lock" style="width: 18px; height: 18px;"></i>
-                    </span>
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+                    <input type="password" name="password" placeholder="Password" required>
                 </div>
+
+                <button type="submit">Daftar Sekarang</button>
+            </form>
+
+            <div class="footer-text">
+                Sudah punya akun? <a href="<?= base_url('auth/login') ?>">Login di sini</a>
             </div>
-
-            <button type="submit" class="btn btn-primary w-100 btn-register">Daftar Sekarang</button>
-        </form>
-
-        <p class="footer-text text-center mt-4">
-            Sudah punya akun? <a href="<?= base_url('auth/login') ?>">Login di sini</a>
-        </p>
+        </div>
     </div>
 
     <script>
+        // Init Lucide Icons
         lucide.createIcons();
     </script>
-
 </body>
 
 </html>
