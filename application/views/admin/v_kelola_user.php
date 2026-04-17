@@ -41,15 +41,13 @@
                         </td>
                         <td style="text-align: center;">
                             <div class="action-group">
-                                <button class="btn-icon edit" 
+                                <button class="btn-icon edit"
                                     onclick="editUser('<?= $u->id_user ?>', '<?= $u->username ?>', '<?= $u->nama_lengkap ?>')"
                                     title="Edit Data">
                                     <span class="material-icons">edit</span>
                                 </button>
-                                <a href="<?= base_url('admin/user_delete/' . $u->id_user) ?>" 
-                                   class="btn-icon delete"
-                                   onclick="return confirm('Hapus siswa <?= $u->nama_lengkap ?>?')"
-                                   title="Hapus Data">
+                                <a href="<?= base_url('admin/user_delete/' . $u->id_user) ?>" class="btn-icon delete"
+                                    onclick="return confirm('Hapus siswa <?= $u->nama_lengkap ?>?')" title="Hapus Data">
                                     <span class="material-icons">delete</span>
                                 </a>
                             </div>
@@ -58,7 +56,7 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-        
+
         <div class="pagination-container">
             <?= $pagination ?>
         </div>
@@ -88,7 +86,8 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn-submit">Simpan Data</button>
-                <button type="button" class="btn-cancel" onclick="document.getElementById('modalUser').style.display='none'">Batal</button>
+                <button type="button" class="btn-cancel"
+                    onclick="document.getElementById('modalUser').style.display='none'">Batal</button>
             </div>
         </form>
     </div>
@@ -98,7 +97,8 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3>Update Data Siswa</h3>
-            <span class="close-modal" onclick="document.getElementById('modalEditUser').style.display='none'">&times;</span>
+            <span class="close-modal"
+                onclick="document.getElementById('modalEditUser').style.display='none'">&times;</span>
         </div>
         <form action="<?= base_url('admin/user_edit') ?>" method="post">
             <div class="modal-body">
@@ -118,63 +118,286 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn-submit update">Simpan Perubahan</button>
-                <button type="button" class="btn-cancel" onclick="document.getElementById('modalEditUser').style.display='none'">Batal</button>
+                <button type="button" class="btn-cancel"
+                    onclick="document.getElementById('modalEditUser').style.display='none'">Batal</button>
             </div>
         </form>
     </div>
 </div>
 
 <style>
-/* HEADER SECTION */
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.header-text h2 { margin: 0; font-size: 24px; font-weight: 800; color: #1a1a1a; }
-.header-text p { margin: 5px 0 0; color: #888; font-size: 14px; }
+    /* HEADER SECTION */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
 
-.btn-add { background: #1a1a1a; color: white; border: none; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-.btn-add:hover { background: #333; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .header-text h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 800;
+        color: #1a1a1a;
+    }
 
-/* TABLE STYLING */
-.table-card { background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; }
-.modern-table { width: 100%; border-collapse: collapse; }
-.modern-table th { background: #fcfcfc; padding: 18px 20px; text-align: left; font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; }
-.modern-table td { padding: 15px 20px; border-bottom: 1px solid #f9f9f9; vertical-align: middle; }
+    .header-text p {
+        margin: 5px 0 0;
+        color: #888;
+        font-size: 14px;
+    }
 
-/* USER CELL */
-.user-profile-cell { display: flex; align-items: center; gap: 12px; }
-.avatar { width: 40px; height: 40px; background: #e3f2fd; color: #1976d2; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
-.user-det strong { display: block; font-size: 15px; color: #333; }
-.user-det small { color: #bbb; font-size: 11px; }
-.username-tag { background: #f5f5f5; padding: 4px 10px; border-radius: 6px; font-family: 'Monaco', monospace; font-size: 13px; color: #666; }
+    .btn-add {
+        background: #1a1a1a;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+    }
 
-/* ACTIONS */
-.action-group { display: flex; justify-content: center; gap: 10px; }
-.btn-icon { width: 36px; height: 36px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; text-decoration: none; }
-.btn-icon.edit { background: #fff4e5; color: #f57f17; }
-.btn-icon.delete { background: #ffebee; color: #c62828; }
-.btn-icon:hover { transform: scale(1.1); }
+    .btn-add:hover {
+        background: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
 
-/* MODAL MODERN */
-.modal-overlay { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-.modal-content { background:#fff; width:400px; margin:8% auto; border-radius:24px; animation: slideIn 0.3s ease; }
-.modal-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-.modal-body { padding: 25px; }
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 8px; }
-.form-group input { width: 100%; padding: 12px 15px; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9; box-sizing: border-box; outline: none; transition: 0.3s; }
-.form-group input:focus { border-color: #1a1a1a; background: #fff; }
+    /* TABLE STYLING */
+    .table-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
 
-.modal-footer { padding: 0 25px 25px; }
-.btn-submit { background: #1a1a1a; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; margin-bottom: 10px; }
-.btn-submit.update { background: #1a1a1a; }
-.btn-cancel { width: 100%; background: none; border: none; color: #888; font-weight: 600; cursor: pointer; }
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-/* PAGINATION OVERRIDE */
-.pagination-container { padding: 20px; text-align: center; }
-.pagination-container a, .pagination-container strong { padding: 8px 14px; margin: 0 4px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; }
-.pagination-container a { background: #f5f5f5; color: #666; }
-.pagination-container strong { background: #1a1a1a; color: #fff; }
+    .modern-table th {
+        background: #fcfcfc;
+        padding: 18px 20px;
+        text-align: left;
+        font-size: 12px;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid #eee;
+    }
 
-@keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modern-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f9f9f9;
+        vertical-align: middle;
+    }
+
+    /* USER CELL */
+    .user-profile-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        background: #e3f2fd;
+        color: #1976d2;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 16px;
+    }
+
+    .user-det strong {
+        display: block;
+        font-size: 15px;
+        color: #333;
+    }
+
+    .user-det small {
+        color: #bbb;
+        font-size: 11px;
+    }
+
+    .username-tag {
+        background: #f5f5f5;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: 'Monaco', monospace;
+        font-size: 13px;
+        color: #666;
+    }
+
+    /* ACTIONS */
+    .action-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-icon.edit {
+        background: #fff4e5;
+        color: #f57f17;
+    }
+
+    .btn-icon.delete {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .btn-icon:hover {
+        transform: scale(1.1);
+    }
+
+    /* MODAL MODERN */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background: #fff;
+        width: 400px;
+        margin: 8% auto;
+        border-radius: 24px;
+        animation: slideIn 0.3s ease;
+    }
+
+    .modal-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-body {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        background: #f9f9f9;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .form-group input:focus {
+        border-color: #1a1a1a;
+        background: #fff;
+    }
+
+    .modal-footer {
+        padding: 0 25px 25px;
+    }
+
+    .btn-submit {
+        background: #1a1a1a;
+        color: white;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    .btn-submit.update {
+        background: #1a1a1a;
+    }
+
+    .btn-cancel {
+        width: 100%;
+        background: none;
+        border: none;
+        color: #888;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* PAGINATION OVERRIDE */
+    .pagination-container {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .pagination-container a,
+    .pagination-container strong {
+        padding: 8px 14px;
+        margin: 0 4px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .pagination-container a {
+        background: #f5f5f5;
+        color: #666;
+    }
+
+    .pagination-container strong {
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-30px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
 </style>
 
 <script>
@@ -186,7 +409,7 @@
     }
 
     // Close modal click outside
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (event.target.className === 'modal-overlay') {
             event.target.style.display = 'none';
         }
